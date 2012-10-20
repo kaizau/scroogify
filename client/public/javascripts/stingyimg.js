@@ -3,8 +3,6 @@ var win = this.window,
 
 StingyImg = {
 
-  formattedURI: '',
-
   detectPixelRatio: function() {
     return win.devicePixelRatio;
   },
@@ -30,6 +28,37 @@ StingyImg = {
 
   replaceSrc: function() {
 
+  },
+
+  ready: function() {
+    if ( !doc.body ) {
+      return window.setTimeout(StingyImg.ready, 1);
+    }
+    StingyImg.init();
+  },
+
+  init: function() {
+    if (this.loaded) return;
+    this.loaded = true;
+
+    console.log('image tags:', StingyImg.getImgTags());
   }
 
 };
+
+if (doc.readyState === 'complete') {
+  setTimeout(StingyImg.ready, 1);
+} else {
+  if (doc.addEventListener) {
+    doc.addEventListener("DOMContentLoaded", StingyImg.ready, false);
+    win.addEventListener("load", StingyImg.ready, false);
+  } else if (doc.attachEvent) {
+    doc.attachEvent("onreadystatechange", StingyImg.ready);
+    win.attachEvent("onload", StingyImg.ready);
+  }
+}
+
+//console.log('pixelRatio:', StingyImg.detectPixelRatio());
+//console.log('viewportWidth:', StingyImg.detectViewportWidth());
+//console.log('orientation:', StingyImg.detectOrientation());
+//console.log('image tags:', StingyImg.getImgTags());
