@@ -1,0 +1,65 @@
+/*** BASE ***/
+
+* { margin: 0; padding: 0; }
+
+body { font: 200 16px/30px "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+
+/*** TAGS ***/
+
+h1 {
+  font: 300 64px/90px 'Open Sans Condensed', sans-serif;
+  margin: 50px;
+}
+
+h2 { font: 300 42px/60px 'Open Sans Condensed', sans-serif; }
+
+a {
+  color: #06f;
+  text-decoration: none;
+}
+
+a:hover { color: #08f; }
+
+
+/*** OBJECTS ***/
+
+.layer {
+  background: #def;
+  margin: 50px 0;
+  padding: 50px;
+}
+
+.layer p { margin-top: 20px; }
+
+
+/*** TEST OBJECTS ***/
+
+.test {
+  display: block;
+  margin: 25px 0;
+}
+
+.stretched-50 { width: 50%; }
+.stretched-75 { width: 75%; }
+
+
+/*** MEDIA QUERIES ***/
+
+.media-shown { display: none; }
+
+/* Extra width to account for scrollbars */
+@media (min-width: 1025px) {
+  .media-shown {
+    background: #fee;
+    display: block;
+    margin: 50px;
+    padding: 25px;
+  }
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 40px; margin: 30px; }
+  h2 { font-size: 25px; }
+  .layer { padding: 30px; margin: 30px 0; }
+}
