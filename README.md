@@ -39,9 +39,17 @@ The URI to which images are rewritten. Works as long as `{{width}}` and `{{url}}
 
 The path to a 1px placeholder gif/png. Defaults to a data-URI, but you may see a performance boost by using an actual gif, due to browser caching.
 
+## TODO
+
+* Speed tests
+* Simple recipe to disable prefetching?
+* Heavy browser testing (not just webkit :P)
+* Optimize for speed
+* Bandwidth detection? (a la [foresight.js](https://github.com/adamdbradley/foresight.js))
+
 ## License
 
-    Copyright (c) 2012 [Yifei Zhang](http://yifei.co)
+    Copyright (c) 2012 Yifei Zhang (http://yifei.co)
 
     MIT License
 
