@@ -1,12 +1,10 @@
-; (function(win, doc, config) {
+; (function(win, doc) {
 
-  StingyImg = {
+  var scroogify = {
 
     config: {
       path: '/stingy/',
-      placeholder: false,
-      breakPoint: 2000,
-      aggressive: true
+      placeholder: false
     },
 
     getPixelRatio: function() {
@@ -18,47 +16,38 @@
       return doc.documentElement.clientWidth;
     },
 
-    getMaxWidth: function() {
-      var pixelRatio = this.getPixelRatio();
-          viewportWidth = this.getViewportWidth();
-
-      return pixelRatio * viewportWidth;
-    },
-
-    replaceImages: function(maxWidth) {
-      var imgNodes = doc.getElementsByTagName('img');
-
-      for(var i = 0; i < imgNodes.length; i++) {
-        var img = imgNodes[i];
-        img.src = this.config.path + maxWidth + '/#' + img.src;
-      }
-    },
-
-    replaceImagesAggressive: function(maxWidth) {
+    replaceImages: function() {
       var imgNodes = doc.getElementsByTagName('img'),
           pixelRatio = this.getPixelRatio(),
-          regexp = new RegExp('//' + location.host + '($|/)'),
+          viewportWidth = this.getViewportWidth(),
+          maxWidth = pixelRatio * viewportWidth,
           placeholder = (placeholder) ? placeholder : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
       for(var i = 0; i < imgNodes.length; i++) {
         var img = imgNodes[i],
-            originalSrc = (img.src.slice(1) === '/') ? img.src : '/' + img.src,
-            originalSrc = (originalSrc.substring(0,4) === "http") ? originalSrc : location.host + '/' + originalSrc,
-            renderWidth;
+            originalSrc, renderWidth;
 
-        console.log(originalSrc);
+        if (img.src.substring(0,4) === 'http' && img.src.indexOf(location.host) === -1) {
+          originalSrc = img.src; // external
+        } else {
+          originalSrc = (img.src.slice(1) === '/') ? img.src.substr(1) : img.src; // local
+        }
+
         img.src = placeholder;
-        renderWidth = (img.clientWidth > 1 && img.clientWidth < maxWidth) ? img.clientWidth * pixelRatio : maxWidth;
+
+        renderWidth = (img.clientWidth > 1) ? img.clientWidth * pixelRatio : maxWidth;
 
         img.src = this.config.path + '?w=' + renderWidth + '&u=' + originalSrc;
+        console.log(viewportWidth, renderWidth);
+        console.log(img.src);
       }
     },
 
     ready: function() {
       if ( !doc.body ) {
-        return window.setTimeout(StingyImg.ready, 1);
+        return window.setTimeout(scroogify.ready, 1);
       }
-      StingyImg.init();
+      scroogify.init();
     },
 
     updateConfig: function() {
@@ -67,7 +56,7 @@
 
       for (var i = 0; i < scripts.length; i++) {
         var script = scripts[i];
-        if (script.src.indexOf('stingyimg.js') !== -1) {
+        if (script.src.indexOf('scroogify') !== -1) {
           thisScript = script;
           break;
         }
@@ -85,28 +74,22 @@
       this.loaded = true;
 
       this.updateConfig();
-
-      max = this.getMaxWidth();
-
-      if (max <= this.config.breakPoint && this.config.aggressive) {
-        this.replaceImagesAggressive(max);
-      } else if (max <= this.config.breakPoint && this.config.aggressive) {
-        this.replaceImages(max);
-      }
+      this.replaceImages();
     }
 
   };
 
+  // TODO rm event handlers
   if (doc.readyState === 'complete') {
-    win.setTimeout(StingyImg.ready, 1);
+    win.setTimeout(scroogify.ready, 1);
   } else {
     if (doc.addEventListener) {
-      doc.addEventListener("DOMContentLoaded", StingyImg.ready, false);
-      win.addEventListener("load", StingyImg.ready, false);
+      doc.addEventListener("DOMContentLoaded", scroogify.ready, false);
+      win.addEventListener("load", scroogify.ready, false);
     } else if (doc.attachEvent) {
-      doc.attachEvent("onreadystatechange", StingyImg.ready);
-      win.attachEvent("onload", StingyImg.ready);
+      doc.attachEvent("onreadystatechange", scroogify.ready);
+      win.attachEvent("onload", scroogify.ready);
     }
   }
 
-})(this.window, this.document, this.StingyConfig);
+})(this.window, this.document);
