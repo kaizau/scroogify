@@ -3,8 +3,9 @@
   var scroogify = {
 
     config: {
-      path: '/stingy/',
-      placeholder: false
+      path: 'http://scroogify-node.herokuapp.com/',
+      placeholder: false,
+      threshold: 1024
     },
 
     getPixelRatio: function() {
@@ -17,34 +18,41 @@
     },
 
     replaceImages: function() {
-      var imgNodes = doc.getElementsByTagName('img'),
-          pixelRatio = this.getPixelRatio(),
+      var pixelRatio = this.getPixelRatio(),
           viewportWidth = this.getViewportWidth(),
           maxWidth = pixelRatio * viewportWidth,
-          placeholder = (placeholder) ? placeholder : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+          placeholder = (placeholder) ? placeholder : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
+          imgNodes;
 
+      // Do nothing if viewport is large enough
+      if (maxWidth > this.config.threshold) return;
+
+      imgNodes = doc.getElementsByTagName('img');
       for(var i = 0; i < imgNodes.length; i++) {
         var img = imgNodes[i],
-            originalSrc, renderWidth;
+            originalSrc = img.src,
+            renderWidth;
 
-        if (img.src.substring(0,4) === 'http' && img.src.indexOf(location.host) === -1) {
-          originalSrc = img.src; // external
-        } else {
-          originalSrc = (img.src.slice(1) === '/') ? img.src.substr(1) : img.src; // local
-        }
+        // Does img.src always fetch the absolute path to the img? Or is this just a webkit feature?
+        console.log(img.src);
 
+        //if (img.src.substring(0,4) === 'http' && img.src.indexOf(location.host) === -1) {
+          //originalSrc = img.src; // external
+        //} else {
+          //originalSrc = (img.src.slice(1) === '/') ? img.src.substr(1) : img.src; // local
+        //}
+
+        // Get the rendered width of the image
+        // (in case the image is resized with CSS or HTML attributes)
         img.src = placeholder;
-
         renderWidth = (img.clientWidth > 1) ? img.clientWidth * pixelRatio : maxWidth;
 
         img.src = this.config.path + '?w=' + renderWidth + '&u=' + originalSrc;
-        console.log(viewportWidth, renderWidth);
-        console.log(img.src);
       }
     },
 
     ready: function() {
-      if ( !doc.body ) {
+      if (! doc.body) {
         return window.setTimeout(scroogify.ready, 1);
       }
       scroogify.init();
@@ -52,7 +60,7 @@
 
     updateConfig: function() {
       var scripts = doc.getElementsByTagName('script'),
-          thisScript, placeholder, path;
+          thisScript, placeholder, path, threshold;
 
       for (var i = 0; i < scripts.length; i++) {
         var script = scripts[i];
@@ -64,8 +72,10 @@
 
       placeholder = thisScript.getAttribute('data-placeholder');
       path = thisScript.getAttribute('data-path');
+      threshold = thisScript.getAttribute('data-threshold');
 
       if (placeholder) this.config.placeholder = placeholder;
+      if (threshold) this.config.threshold = parseInt(threshold);
       if (path) this.config.path = (path.slice(-1) === '/') ? path : path + '/';
     },
 
