@@ -3,7 +3,8 @@
   var scroogify = {
 
     config: {
-      path: 'http://scroogify-node.herokuapp.com?w={{width}}&u={{url}}',
+      //path: 'http://scroogify-node.herokuapp.com?w={{width}}&u={{url}}',
+      path: 'http://src.sencha.io/{{width}}/{{url}}',
       placeholder: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
       threshold: 1024
     },
