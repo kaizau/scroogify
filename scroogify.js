@@ -1,4 +1,5 @@
-; (function(win, doc) {
+/*! Scroogify.js | v0.0.1.pre | https://github.com/ezYZ/scroogify */
+(function(win, doc) {
 
   var scroogify = {
 
