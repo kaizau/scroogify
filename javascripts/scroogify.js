@@ -24,6 +24,10 @@
           placeholder = (placeholder) ? placeholder : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
           imgNodes;
 
+      console.log(pixelRatio);
+      console.log(viewportWidth);
+      console.log(maxWidth);
+
       // Do nothing if viewport is large enough
       if (maxWidth > this.config.threshold) return;
 
