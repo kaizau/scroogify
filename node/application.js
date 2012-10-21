@@ -22,7 +22,6 @@ app.get('/', function(req, res, next) {
   request.get({url: req.query.u}, path, function(err, result) {
     var mimetype = mime(result.file, function(err, type) {
 
-      console.log(type);
       var dstpath = path + '-' + w + 'x' + h + '.' + type.split('/')[1];
       var options = {
         srcPath: result.file,
