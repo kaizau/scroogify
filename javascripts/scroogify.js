@@ -17,7 +17,7 @@
       return doc.documentElement.clientWidth;
     },
 
-    replaceImages: function() {
+    resizeImages: function() {
       var pixelRatio = this.getPixelRatio(),
           viewportWidth = this.getViewportWidth(),
           maxWidth = pixelRatio * viewportWidth,
@@ -35,12 +35,6 @@
 
         // Does img.src always fetch the absolute path to the img? Or is this just a webkit feature?
         console.log(img.src);
-
-        //if (img.src.substring(0,4) === 'http' && img.src.indexOf(location.host) === -1) {
-          //originalSrc = img.src; // external
-        //} else {
-          //originalSrc = (img.src.slice(1) === '/') ? img.src.substr(1) : img.src; // local
-        //}
 
         // Get the rendered width of the image
         // (in case the image is resized with CSS or HTML attributes)
@@ -84,7 +78,7 @@
       this.loaded = true;
 
       this.updateConfig();
-      this.replaceImages();
+      this.resizeImages();
     }
 
   };
