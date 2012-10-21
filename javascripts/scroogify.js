@@ -3,8 +3,8 @@
   var scroogify = {
 
     config: {
-      path: 'http://scroogify-node.herokuapp.com/',
-      placeholder: false,
+      path: 'http://scroogify-node.herokuapp.com?w={{width}}&u={{url}}',
+      placeholder: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
       threshold: 1024
     },
 
@@ -20,13 +20,8 @@
     resizeImages: function() {
       var pixelRatio = this.getPixelRatio(),
           viewportWidth = this.getViewportWidth(),
-          maxWidth = pixelRatio * viewportWidth,
-          placeholder = (placeholder) ? placeholder : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
+          maxWidth = Math.ceil(pixelRatio * viewportWidth),
           imgNodes;
-
-      console.log(pixelRatio);
-      console.log(viewportWidth);
-      console.log(maxWidth);
 
       // Do nothing if viewport is large enough
       if (maxWidth > this.config.threshold) return;
@@ -37,22 +32,23 @@
             originalSrc = img.src,
             renderWidth;
 
-        // Does img.src always fetch the absolute path to the img? Or is this just a webkit feature?
+        // TODO determine the original width of the image and skip all of this?
+        // TODO Does img.src always fetch the absolute path to the img? Or is this just a webkit feature?
         console.log(img.src);
 
-        // Get the rendered width of the image
-        // (in case the image is resized with CSS or HTML attributes)
-        img.src = placeholder;
+        // Swap src with placeholder and get the rendered width of the image
+        // Fallback to maxWidth if placeholder is not resized via CSS or HTML attributes
+        img.src = this.config.placeholder;
         renderWidth = (img.clientWidth > 1) ? img.clientWidth * pixelRatio : maxWidth;
 
-        img.src = this.config.path + '?w=' + renderWidth + '&u=' + originalSrc;
+        // Swap the source to use the image resizer
+        newSrc = this.config.path.replace('{{width}}', renderWidth).replace('{{url}}', originalSrc);
+        img.src = newSrc;
       }
     },
 
     ready: function() {
-      if (! doc.body) {
-        return window.setTimeout(scroogify.ready, 1);
-      }
+      if (! doc.body) return window.setTimeout(scroogify.ready, 1);
       scroogify.init();
     },
 
@@ -68,13 +64,9 @@
         }
       }
 
-      placeholder = thisScript.getAttribute('data-placeholder');
-      path = thisScript.getAttribute('data-path');
-      threshold = thisScript.getAttribute('data-threshold');
-
-      if (placeholder) this.config.placeholder = placeholder;
-      if (threshold) this.config.threshold = parseInt(threshold);
-      if (path) this.config.path = (path.slice(-1) === '/') ? path : path + '/';
+      if (thisScript.hasAttribute('data-placeholder')) this.config.placeholder = thisScript.getAttribute('data-placeholder');
+      if (thisScript.hasAttribute('data-path')) this.config.path = parseInt(thisScript.getAttribute('data-path'));
+      if (thisScript.hasAttribute('data-threshold')) this.config.threshold = thisScript.getAttribute('data-threshold');
     },
 
     init: function() {
@@ -87,17 +79,18 @@
 
   };
 
-  // TODO rm event handlers
+  // Simple DOM Ready
+  //
+  // borrowed from jQuery source
+  // TODO detach listeners  after ready?
   if (doc.readyState === 'complete') {
     win.setTimeout(scroogify.ready, 1);
-  } else {
-    if (doc.addEventListener) {
-      doc.addEventListener("DOMContentLoaded", scroogify.ready, false);
-      win.addEventListener("load", scroogify.ready, false);
-    } else if (doc.attachEvent) {
-      doc.attachEvent("onreadystatechange", scroogify.ready);
-      win.attachEvent("onload", scroogify.ready);
-    }
+  } else if (doc.addEventListener) {
+    doc.addEventListener('DOMContentLoaded', scroogify.ready, false);
+    win.addEventListener('load', scroogify.ready, false);
+  } else if (doc.attachEvent) {
+    doc.attachEvent('onreadystatechange', scroogify.ready);
+    win.attachEvent('onload', scroogify.ready);
   }
 
 })(this.window, this.document);
