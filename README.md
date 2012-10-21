@@ -27,7 +27,7 @@ Scroogify only executes on screens smaller than a configurable threshold. On exe
 
 (Default values shown)
 
-**`data-threshold="1024"`**
+**`data-threshold="1280"`**
 
 The pixel threshold above which Scroogify does not execute.
 

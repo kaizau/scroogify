@@ -21,6 +21,8 @@ a {
 
 a:hover { color: #08f; }
 
+img { max-width: 100%; }
+
 
 /*** OBJECTS ***/
 
@@ -49,7 +51,7 @@ a:hover { color: #08f; }
 .media-shown { display: none; }
 
 /* Extra width to account for scrollbars */
-@media (min-width: 1025px) {
+@media (min-width: 1281px) {
   .media-shown {
     background: #fee;
     display: block;
@@ -58,7 +60,7 @@ a:hover { color: #08f; }
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 720px) {
   h1 { font-size: 40px; margin: 30px; }
   h2 { font-size: 25px; }
   .layer { padding: 30px; margin: 30px 0; }
