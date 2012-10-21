@@ -23,6 +23,10 @@
           maxWidth = Math.ceil(pixelRatio * viewportWidth),
           imgNodes;
 
+      //console.log('pixelRatio:', pixelRatio);
+      //console.log('viewportWidth:', viewportWidth);
+      //console.log('maxWidth:', maxWidth);
+
       // Do nothing if viewport is large enough
       if (maxWidth > this.config.threshold) return;
 
@@ -34,12 +38,12 @@
 
         // TODO determine the original width of the image and skip all of this?
         // TODO Does img.src always fetch the absolute path to the img? Or is this just a webkit feature?
-        console.log(img.src);
+        //console.log(img.src);
 
         // Swap src with placeholder and get the rendered width of the image
         // Fallback to maxWidth if placeholder is not resized via CSS or HTML attributes
         img.src = this.config.placeholder;
-        renderWidth = (img.clientWidth > 1) ? img.clientWidth * pixelRatio : maxWidth;
+        renderWidth = (img.clientWidth > 1) ? Math.ceil(img.clientWidth * pixelRatio) : maxWidth;
 
         // Swap the source to use the image resizer
         newSrc = this.config.path.replace('{{width}}', renderWidth).replace('{{url}}', originalSrc);
